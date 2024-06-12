@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { dirname, importx } from "@discordx/importer";
 import { YTDLPlayerPlugin } from "@discordx/plugin-ytdl-player";
 import type { Interaction, Message } from "discord.js";
@@ -10,7 +11,7 @@ const ytdlPlayerPlugin = new YTDLPlayerPlugin({
 
 export const bot = new Client({
   // To use only guild command
-  // botGuilds: [(client) => client.guilds.cache.map((guild) => guild.id)],
+  botGuilds: [(client) => client.guilds.cache.map((guild) => guild.id)],
 
   // Discord intents
   intents: [
@@ -29,13 +30,13 @@ export const bot = new Client({
 
   // Configuration for @SimpleCommand
   simpleCommand: {
-    prefix: "!",
+    prefix: "?",
   },
 });
 
 bot.once("ready", async () => {
   // Make sure all guilds are cached
-  // await bot.guilds.fetch();
+  await bot.guilds.fetch();
 
   // Synchronize applications commands with Discord
   await bot.initApplicationCommands();
@@ -44,9 +45,7 @@ bot.once("ready", async () => {
   // This is useful when moving from guild commands to global commands
   // It must only be executed once
   //
-  //  await bot.clearApplicationCommands(
-  //    ...bot.guilds.cache.map((g) => g.id)
-  //  );
+  // await bot.clearApplicationCommands(...bot.guilds.cache.map((g) => g.id));
 
   console.log("Bot started");
 });
