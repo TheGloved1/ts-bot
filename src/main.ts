@@ -1,5 +1,6 @@
 import "dotenv/config";
 import { dirname, importx } from "@discordx/importer";
+import { LavaPlayerPlugin } from "@discordx/plugin-lava-player";
 import { YTDLPlayerPlugin } from "@discordx/plugin-ytdl-player";
 import type { Interaction, Message } from "discord.js";
 import { IntentsBitField } from "discord.js";
@@ -9,9 +10,13 @@ const ytdlPlayerPlugin = new YTDLPlayerPlugin({
   metadata: MetadataStorage.instance,
 });
 
+const lavaPlayerPlugin = new LavaPlayerPlugin({
+  metadata: MetadataStorage.instance,
+});
+
 export const bot = new Client({
   // To use only guild command
-  botGuilds: [(client) => client.guilds.cache.map((guild) => guild.id)],
+  // botGuilds: [(client) => client.guilds.cache.map((guild) => guild.id)],
 
   // Discord intents
   intents: [
@@ -23,7 +28,7 @@ export const bot = new Client({
   ],
 
   // plugins
-  plugins: [ytdlPlayerPlugin],
+  plugins: [ytdlPlayerPlugin, lavaPlayerPlugin],
 
   // Debug logs are disabled in silent mode
   silent: false,
@@ -59,10 +64,6 @@ bot.on("messageCreate", async (message: Message) => {
 });
 
 async function run() {
-  // The following syntax should be used in the commonjs environment
-  //
-  // await importx(__dirname + "/{events,commands}/**/*.{ts,js}");
-
   // The following syntax should be used in the ECMAScript environment
   await importx(`${dirname(import.meta.url)}/{events,commands}/**/*.{ts,js}`);
 
