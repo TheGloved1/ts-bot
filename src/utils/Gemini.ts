@@ -14,7 +14,7 @@ import autoDelete from "./autoDelete.js";
 import path from "path";
 import { fileURLToPath } from "url";
 import { Client } from "discordx";
-import { config } from "../config/config.js";
+import { config } from "../config.js";
 
 /**
  * The path to the current directory.

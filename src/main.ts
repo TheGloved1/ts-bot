@@ -1,11 +1,10 @@
-import "dotenv/config";
 import "@discordx/plugin-ytdl-player";
 import { dirname, importx } from "@discordx/importer";
 import type { Interaction, Message } from "discord.js";
 import { ActivityType, ChannelType, Events, IntentsBitField } from "discord.js";
 import { Client } from "discordx";
 import { aiGenerate } from "./utils/Gemini";
-import { config } from "./config/config";
+import { config } from "./config";
 
 export const bot = new Client({
   // To use only guild command
@@ -142,7 +141,7 @@ bot.on(Events.MessageCreate, async (message: Message) => {
     return;
   }
 
-  await bot.executeCommand(message);
+  // await bot.executeCommand(message);
 });
 
 async function run() {
