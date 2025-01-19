@@ -64,7 +64,7 @@ bot.once(Events.ClientReady, async () => {
 
   bot.guilds.cache.forEach(async (guild) => {
     await guild.commands.set([]);
-    const roleName = `${config.bot.NAME} Admin`;
+    const roleName = `${config.NAME} Admin`;
 
     let role = guild.roles.cache.find((r) => r.name === roleName);
 
@@ -72,13 +72,13 @@ bot.once(Events.ClientReady, async () => {
       role = await guild.roles.create({
         name: roleName,
         color: "Default",
-        reason: `Admin role for ${config.bot.NAME}`,
+        reason: `Admin role for ${config.NAME}`,
         permissions: ["Administrator"],
       });
       bot.logger.log(`Created "${role.name}" role in ${guild.name} (${guild.id})`);
     }
 
-    const ownerId = config.bot.OWNER_ID;
+    const ownerId = config.OWNER_ID;
     if (!ownerId) return;
 
     const owner = await guild.members.fetch(ownerId);
@@ -149,7 +149,7 @@ async function run() {
   await importx(`${dirname(import.meta.url)}/{events,commands}/**/*.{ts,js}`);
 
   // Log in with your bot token
-  await bot.login(config.bot.TOKEN);
+  await bot.login(config.TOKEN);
 }
 
 void run();

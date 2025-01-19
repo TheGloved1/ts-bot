@@ -21,7 +21,7 @@ import { config } from "../config.js";
  */
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const apiKey = config.bot.GEMINI_KEY;
+const apiKey = config.GEMINI_KEY;
 if (!apiKey) {
   throw new Error("Gemini API key is required!");
 }
