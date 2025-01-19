@@ -6,10 +6,17 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "build:changelog": "npx @discordx/changelog --src src",
-    "dev": "node --loader ts-node/esm/transpile-only src/main.ts",
+    "build:changelog": "bunx @discordx/changelog --src src",
+    "dev": "tsx src/main.ts",
     "start": "node build/main.js",
-    "watch": "nodemon --exec npm run dev --watch src --ext ts"
+    "watch": "nodemon --exec bun run dev --watch src --ext ts"
+  },
+  "prettier": {
+    "trailingComma": "es5",
+    "tabWidth": 2,
+    "semi": true,
+    "singleQuote": false,
+    "printWidth": 150
   },
   "repository": {
     "type": "git",
@@ -30,18 +37,22 @@
   },
   "homepage": "https://github.com/samarmeena/discord-music-bot#readme",
   "dependencies": {
-    "@discordx/importer": "^1.3.0",
-    "@discordx/plugin-ytdl-player": "^2.0.7",
-    "@discordx/plugin-lava-player": "^1.0.6",
+    "@app-config/main": "^2.9.0-beta.1",
+    "@discordx/importer": "^1.3.1",
+    "@discordx/plugin-lava-player": "^2.5.5",
+    "@discordx/plugin-ytdl-player": "^2.3.5",
+    "@google/generative-ai": "^0.21.0",
     "discord.js": "^14.15.3",
-    "discordx": "^11.9.2",
-    "dotenv": "^16.4.5"
+    "discordx": "^11.12.2",
+    "dotenv": "^16.4.7",
+    "node-gyp": "^11.0.0",
+    "zod": "^3.24.1"
   },
   "devDependencies": {
+    "tsx": "^4.19.2",
     "@types/node": "^20.14.1",
     "nodemon": "^3.1.3",
-    "prettier": "^3.3.0",
-    "ts-node": "^10.9.2",
+    "prettier": "^3.4.2",
     "typescript": "5.4.5"
   }
 }
