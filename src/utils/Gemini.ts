@@ -10,11 +10,11 @@ import {
 } from "@google/generative-ai";
 import { ChannelType, Collection, Message, ThreadAutoArchiveDuration, User } from "discord.js";
 import fs, { readFileSync, writeFileSync } from "fs";
-import autoDelete from "./autoDelete.js";
+import { config } from "../utils/config.js";
+import { autoDelete } from "../utils/autoDelete.js";
 import path from "path";
 import { fileURLToPath } from "url";
 import { Client } from "discordx";
-import { config } from "../config.js";
 
 /**
  * The path to the current directory.
@@ -119,6 +119,9 @@ function logMessage(message: string): void {
  */
 export function getSystemPrompt() {
   const systemPrompt = fs.readFileSync("system_prompt.txt", "utf8").trim();
+  if (!systemPrompt) {
+    throw new Error("system_prompt.txt is required");
+  }
   return systemPrompt;
 }
 

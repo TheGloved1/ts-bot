@@ -1,14 +1,13 @@
-import "@discordx/plugin-ytdl-player";
 import { dirname, importx } from "@discordx/importer";
-import type { Interaction, Message } from "discord.js";
-import { ActivityType, ChannelType, Events, IntentsBitField } from "discord.js";
+import { ActivityType, Events, IntentsBitField, Partials } from "discord.js";
 import { Client } from "discordx";
-import { aiGenerate } from "./utils/Gemini";
-import { config } from "./config";
+import { config } from "./utils/index.js";
+import { QueueManager, Node } from "@discordx/music";
+import { musicPlayerManager } from "./core/manager.js";
 
 export const bot = new Client({
-  // To use only guild command
-  botGuilds: [(client) => client.guilds.cache.map((guild) => guild.id)],
+  // To use only guild commands
+  // botGuilds: [(client) => client.guilds.cache.map((guild) => guild.id)],
 
   // Discord intents
   intents: [
@@ -19,6 +18,8 @@ export const bot = new Client({
     IntentsBitField.Flags.GuildVoiceStates,
     IntentsBitField.Flags.MessageContent,
   ],
+
+  partials: [Partials.Message, Partials.User, Partials.Channel, Partials.GuildMember, Partials.Reaction],
 
   // Debug logs are disabled in silent mode
   silent: false,
@@ -37,60 +38,7 @@ export const bot = new Client({
   },
 });
 
-bot.once(Events.ClientReady, async () => {
-  // Make sure all guilds are cached
-  await bot.guilds.fetch();
-
-  // Synchronize applications commands with Discord
-  await bot.initApplicationCommands();
-
-  // To clear all guild commands, uncomment this line,
-  // This is useful when moving from guild commands to global commands
-  // It must only be executed once
-  //
-  // await bot.clearApplicationCommands(...bot.guilds.cache.map((g) => g.id));
-
-  bot.user!.setPresence({
-    activities: [
-      {
-        name: `${bot.guilds.cache.size} servers | /play`,
-        type: ActivityType.Listening,
-      },
-    ],
-    status: "online",
-  });
-
-  bot.logger.log(">> Bot started");
-
-  bot.guilds.cache.forEach(async (guild) => {
-    await guild.commands.set([]);
-    const roleName = `${config.NAME} Admin`;
-
-    let role = guild.roles.cache.find((r) => r.name === roleName);
-
-    if (!role) {
-      role = await guild.roles.create({
-        name: roleName,
-        color: "Default",
-        reason: `Admin role for ${config.NAME}`,
-        permissions: ["Administrator"],
-      });
-      bot.logger.log(`Created "${role.name}" role in ${guild.name} (${guild.id})`);
-    }
-
-    const ownerId = config.OWNER_ID;
-    if (!ownerId) return;
-
-    const owner = await guild.members.fetch(ownerId);
-
-    if (owner && !owner.roles.cache.has(role.id)) {
-      await owner.roles.add(role);
-      bot.logger.log(`Added "${role.name}" role to user "${owner.user.tag}" in ${guild.name} (${guild.id})`);
-    }
-  });
-});
-
-bot.on(Events.GuildUpdate, async () => {
+bot.on(Events.GuildAvailable, async () => {
   await bot.guilds.fetch();
   bot.user!.setPresence({
     activities: [
@@ -101,47 +49,6 @@ bot.on(Events.GuildUpdate, async () => {
     ],
     status: "online",
   });
-});
-
-bot.on(Events.InteractionCreate, (interaction: Interaction) => {
-  bot.executeInteraction(interaction);
-});
-
-bot.on(Events.MessageCreate, async (message: Message) => {
-  const channel = message.channel;
-  const author = message.author;
-  if (author.bot || channel.type == ChannelType.DM) return;
-
-  if (channel.name == "gloved-gpt") {
-    console.log(channel.name);
-    await aiGenerate({
-      bot,
-      message,
-      createThread: true,
-    });
-
-    return;
-  } else if (message.mentions.has(bot.user!) && !message.mentions.everyone) {
-    await aiGenerate({
-      bot,
-      message,
-      fetchLimit: 10,
-    });
-
-    return;
-  } else if (channel.isThread() && channel?.parent?.name == "gloved-gpt") {
-    await channel.sendTyping();
-    await aiGenerate({
-      bot,
-      message,
-      fetchLimit: 65,
-      streaming: false,
-    });
-
-    return;
-  }
-
-  // await bot.executeCommand(message);
 });
 
 async function run() {

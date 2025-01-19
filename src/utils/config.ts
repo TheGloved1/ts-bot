@@ -14,8 +14,8 @@ const fetchConfig = async () => {
   const result = configSchema.safeParse(data);
   if (!result.success) {
     const error = result.error.flatten();
-    const issues = error.formErrors.join("\n");
-    throw new Error(`Config file is invalid: ${issues}`);
+    const issues = error.fieldErrors;
+    throw new Error(`Config file is invalid: ${JSON.stringify(issues, null, 2)}`);
   }
   return result.data;
 };
